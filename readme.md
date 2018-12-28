@@ -1,4 +1,4 @@
-# cntk-netcore-rnn
+# NeuralNetCore
 Porting of the Microsoft Cognitive Toolkit (CNTK) Recurrent Neural Network (RNN) [python example](https://github.com/Microsoft/CNTK/blob/master/Examples/Text/CharacterLM/char_rnn.py) to .NET Core
 
 a) Download CNTK version 2.6 (Windows+Linux) from:
