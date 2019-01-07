@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CNTK;
 
-namespace CharRNNCNTK
+namespace NeuralNet.Training
 {
     /// <summary>
     /// This class builds a Droppo self-stabilizer layer and outputs it as a function

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using CNTK;
 
-namespace CharRNNCNTK
+namespace NeuralNet.Training
 {
     class Program
     {
@@ -119,7 +119,7 @@ namespace CharRNNCNTK
         public Program()
         {
             SetDevice();
-            var trainingFile = @"..\CNTKRefresh\Data\tinyshakespeare.txt";
+            var trainingFile = @"..\Resources\Data\tinyshakespeare.txt";
             if(!loadData(trainingFile)) return;
             Console.WriteLine($"Data { trainingFile } has { text.Length } characters, with { characters.Count } unique characters.");
 

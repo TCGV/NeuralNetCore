@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CNTK;
 
-namespace CharRNNCNTK
+namespace NeuralNet.Training
 {
     /// <summary>
     /// This class builds a Dense layer and returns it as a Function
