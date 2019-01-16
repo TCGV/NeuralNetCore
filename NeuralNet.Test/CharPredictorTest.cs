@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeuralNet.Models;
+using NeuralNet.Prediction;
 
 namespace NeuralNet.Test
 {

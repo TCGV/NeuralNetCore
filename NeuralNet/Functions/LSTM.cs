@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CNTK;
 
-namespace NeuralNet.Training
+namespace NeuralNet.Functions
 {
     /// <summary>
     /// This class builds an LSTM layer and returns it as a Function
@@ -27,19 +24,33 @@ namespace NeuralNet.Training
         /// <param name="enableSelfStabilization">If True, then all state-related projection will contain a Stabilizer()</param>
         /// <param name="outputName">The name of the Function instance in the network</param>
         /// <returns>A function that implements a recurrent LSTM layer</returns>
-        public static Function Build<T>(Variable input,int lstmDimension, DeviceDescriptor device, int cellDimension = 0, bool enableSelfStabilization = false, string outputName = "lstm")
+        public static Function Build<T>(
+            Variable input,
+            int lstmDimension,
+            DeviceDescriptor device,
+            int cellDimension,
+            bool enableSelfStabilization,
+            string outputName)
         {
-            System.Diagnostics.Debug.Assert(typeof(T) == typeof(float) || typeof(T) == typeof(double));
-            if (cellDimension == 0) cellDimension = lstmDimension;
+            if (cellDimension == 0)
+                cellDimension = lstmDimension;
+
             Func<Variable, Function> pastValueRecurrenceHook = (x) => CNTKLib.PastValue(x);
+
             Function lstmFunction = LSTMComponent<T>(input, new int[] {lstmDimension}, new int[] {cellDimension},
                     pastValueRecurrenceHook, pastValueRecurrenceHook, enableSelfStabilization, device)
                 .Item1;
+
             return Function.Alias(lstmFunction, "LSTM");
         }
 
-        public static Function Build(Variable input,int lstmDimension, DeviceDescriptor device,
-            int cellDimension = 0, bool enableSelfStabilization = false, string outputName = "lstm")
+        public static Function Build(
+            Variable input,
+            int lstmDimension,
+            DeviceDescriptor device,
+            int cellDimension = 0,
+            bool enableSelfStabilization = false,
+            string outputName = "lstm")
         {
             return Build<float>(input, lstmDimension, device, cellDimension, enableSelfStabilization, outputName);
         }

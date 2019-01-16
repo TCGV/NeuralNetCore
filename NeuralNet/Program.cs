@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NeuralNet.Prediction;
+using NeuralNet.Training;
 
-namespace NeuralNet.Models
+namespace NeuralNet
 {
     class Program
     {
         static void Main(string[] args)
         {
+            new ModelTrainer().PerformTraining(new TrainingConfig { TrainingFile = @"..\Resources\Data\tinyshakespeare.txt" });
+
             var modelPath = @"..\Resources\Model\shakespeare_epoch41.dnn";
             var symbols = LoadSymbols( @"..\Resources\Data\tinyshakespeare.txt");
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace NeuralNet.Models
+namespace NeuralNet.Utilities
 {
     public class Codec<T>
     {

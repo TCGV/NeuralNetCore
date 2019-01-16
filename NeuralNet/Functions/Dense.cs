@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using CNTK;
 
-namespace NeuralNet.Training
+namespace NeuralNet.Functions
 {
     /// <summary>
     /// This class builds a Dense layer and returns it as a Function
@@ -73,7 +69,6 @@ namespace NeuralNet.Training
 
         private static Function FullyConnectedLinearLayer<T>(Variable input, int outputDimension, DeviceDescriptor device, string outputName = "")
         {
-            System.Diagnostics.Debug.Assert(input.Shape.Rank == 1);
             int inputDimension = input.Shape[0];
 
             int[] s = { outputDimension, inputDimension };
@@ -85,14 +80,15 @@ namespace NeuralNet.Training
                     1),
                 device,
                 "weight");
-            var timesFunction = CNTKLib.Times(weight, input, "linearCombination");
 
+            var timesFunction = CNTKLib.Times(weight, input, "linearCombination");
             int[] s2 = { outputDimension };
             Parameter bias;
             if(typeof(T) == typeof(float))
                 bias = new Parameter(s2, 0.0f, device, "bias");
             else
                 bias = new Parameter(s2, 0.0, device, "bias");
+
             return CNTKLib.Plus(bias, timesFunction, outputName);
         }
     }

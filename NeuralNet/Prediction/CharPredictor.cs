@@ -1,10 +1,11 @@
+using CNTK;
+using NeuralNet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CNTK;
 
-namespace NeuralNet.Models
+namespace NeuralNet.Prediction
 {
     public class CharPredictor
     {

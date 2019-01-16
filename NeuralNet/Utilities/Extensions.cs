@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NeuralNet.Models
+namespace NeuralNet.Utilities
 {
     public static class Extensions
     {

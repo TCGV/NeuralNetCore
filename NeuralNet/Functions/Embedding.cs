@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CNTK;
 
-namespace NeuralNet.Training
+namespace NeuralNet.Functions
 {
     /// <summary>
     /// This class builds an embedding layer and returns it as a Function

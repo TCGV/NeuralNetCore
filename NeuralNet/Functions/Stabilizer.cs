@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CNTK;
 
-namespace NeuralNet.Training
+namespace NeuralNet.Functions
 {
     /// <summary>
     /// This class builds a Droppo self-stabilizer layer and outputs it as a function
@@ -28,9 +28,9 @@ namespace NeuralNet.Training
         /// <returns>A Function that implements Stabilizer</returns>
         public static Function Build<TElementType>(Variable input, DeviceDescriptor device, string outputName = "Stabilizer")
         {
-            System.Diagnostics.Debug.Assert(typeof(TElementType) == typeof(float) || typeof(TElementType) == typeof(double));
             bool isFloatType = typeof(TElementType) == typeof(float);
             Constant f, fInv;
+
             if (isFloatType)
             {
                 f = Constant.Scalar(4.0f, device);
@@ -49,6 +49,7 @@ namespace NeuralNet.Training
                     CNTKLib.Exp(CNTKLib.ElementTimes(f,
                         new Parameter(new NDShape(), f.DataType, .99537863 /* 1/f*ln(e^f-1)*/, device, "alpha")))),
                 "beta");
+                
             return Function.Alias(CNTKLib.ElementTimes(beta, input), outputName);
         }
 
