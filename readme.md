@@ -10,7 +10,7 @@ c) Add the binarie path `C:\Local\cntk-2.6\cntk` to the `PATH` environment varia
 
 d) Install `Microsoft C++ Redistributable` 2013 and `Microsoft C++ Redistributable 2017`
 
-e) Run the apps `dotnet run --framework netcoreapp2.1`
+e) Run the test project `dotnet test --framework netcoreapp2.1`
 
 Refactored from:
 - https://github.com/albertalrisa/cntk-csharp-rnn

@@ -10,9 +10,21 @@ namespace NeuralNet.Prediction
     public class CharPredictor
     {
         public CharPredictor(string modelPath, IEnumerable<char> symbols, bool seed = true)
+            : this(symbols, seed)
         {
             SetDevice();
             this.model = Function.Load(modelPath, device);
+        }
+
+        public CharPredictor(Function model, IEnumerable<char> symbols, bool seed = true)
+            : this(symbols, seed)
+        {
+            SetDevice();
+            this.model = model;
+        }
+
+        CharPredictor(IEnumerable<char> symbols, bool seed = true)
+        {
             this.codec = new Codec<char>(symbols);
             this.random = seed ? new Random() : new Random(0);
         }

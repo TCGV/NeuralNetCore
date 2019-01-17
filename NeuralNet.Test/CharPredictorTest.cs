@@ -1,8 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NeuralNet.Prediction;
+using NeuralNet.Training;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeuralNet.Prediction;
 
 namespace NeuralNet.Test
 {
@@ -22,6 +23,23 @@ namespace NeuralNet.Test
             var sentence = predictor.Evaluate(textToTest, targetLength);
             
             var expected = "He! one's this is stabunt.\n\nMENENIUS:\nGo, behind this is must Yet outionvios!\n\nMARCIUS:\nThey find you\n";
+            Assert.AreEqual(expected, sentence);
+        }
+
+        [TestMethod]
+        public void TrainAndEvaluateTest()
+        {
+            var symbols = LoadSymbols(@"..\..\..\..\Resources\Data\tinyshakespeare.txt");
+
+            var model = new ModelTrainer().PerformTraining(new TrainingConfig { TrainingFile = @"..\..\..\..\Resources\Data\tinyshakespeare.txt", Epochs = 1 });
+
+            var predictor = new CharPredictor(model, symbols, false);
+
+            var textToTest = "He";
+            var targetLength = 102;
+            var sentence = predictor.Evaluate(textToTest, targetLength);
+            
+            var expected = "Herech athy thous\r\nse's;'\r\nEre spacrebbses.\r\n\r\nOMENENIUS:\r\nO, true roce ye crutch and fight with the.\r";
             Assert.AreEqual(expected, sentence);
         }
 

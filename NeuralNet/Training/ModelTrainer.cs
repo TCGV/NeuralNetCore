@@ -16,12 +16,12 @@ namespace NeuralNet.Training
             SetDevice();
         }
 
-        public void PerformTraining(TrainingConfig config)
+        public Function PerformTraining(TrainingConfig config)
         {
             LoadData(config.TrainingFile);
 
-            inputModel = CreateInputs(characters.Count);
-            var modelSequence = CreateModel(characters.Count, 2, 256);
+            inputModel = CreateInputs(symbols.Count);
+            var modelSequence = CreateModel(symbols.Count, 2, 256);
             model = modelSequence(inputModel.InputSequence);
 
             //  Setup the criteria (loss and metric)
@@ -42,20 +42,16 @@ namespace NeuralNet.Training
             uint minibatchesPerEpoch = (uint) Math.Min(text.Length / config.MinibatchSize, config.MaxNumberOfMinibatches / config.Epochs);
 
             for (int i = 0; i < config.Epochs; i++)
-            {
                 TrainMinibatch(config, minibatchesPerEpoch, i);
-                
-                var modelFilename = $"newmodels/shakespeare_epoch{ i + 1 }.dnn";
-                
-                model.Save(modelFilename);
-            }
+
+            return model;
         }
 
         private void TrainMinibatch(TrainingConfig config, uint minibatchesPerEpoch, int i)
         {
             for (int j = 0; j < minibatchesPerEpoch; j++)
             {
-                var trainingData = GetData(j, config.MinibatchSize, text, characters.Count);
+                var trainingData = GetData(j, config.MinibatchSize);
 
                 var features = Value.CreateSequence<float>(inputModel.InputSequence.Shape,
                     trainingData.InputSequence, device);
@@ -100,10 +96,10 @@ namespace NeuralNet.Training
             };
         }
 
-        private MinibatchData GetData(int index, int minibatchSize, string data, int vocabDimension)
+        private MinibatchData GetData(int index, int minibatchSize)
         {
-            var inputString = data.Substring(index, minibatchSize);
-            var outputString = data.Substring(index + 1, minibatchSize);
+            var inputString = text.Substring(index, minibatchSize);
+            var outputString = text.Substring(index + 1, minibatchSize);
 
             //  Handle EOF
             if (outputString.Length < minibatchSize)
@@ -116,12 +112,12 @@ namespace NeuralNet.Training
             for (int i = 0; i < inputString.Length; i++)
             {
                 var inputCharacterIndex = codec.Encode(inputString[i]);
-                var inputCharOneHot = new float[vocabDimension];
+                var inputCharOneHot = new float[symbols.Count];
                 inputCharOneHot[inputCharacterIndex] = 1;
                 inputSequence.AddRange(inputCharOneHot);
 
                 var outputCharacterIndex = codec.Encode(outputString[i]);
-                var outputCharOneHot = new float[vocabDimension];
+                var outputCharOneHot = new float[symbols.Count];
                 outputCharOneHot[outputCharacterIndex] = 1;
                 outputSequence.AddRange(outputCharOneHot);
             }
@@ -136,10 +132,10 @@ namespace NeuralNet.Training
         private void LoadData(string filename)
         {
             text = File.ReadAllText(filename);
-            characters = text.Distinct().ToList();
-            characters.Sort();
+            symbols = text.Distinct().Where(c => c != '\r').ToList();
+            symbols.Sort();
 
-            codec = new Codec<char>(characters);
+            codec = new Codec<char>(symbols);
         }
         
         private void SetDevice(DeviceDescriptor device = null)
@@ -165,7 +161,7 @@ namespace NeuralNet.Training
         private Trainer trainer;
         
         private string text;
-        private List<char> characters;
+        private List<char> symbols;
         private Codec<char> codec;
 
         private DeviceDescriptor device;
