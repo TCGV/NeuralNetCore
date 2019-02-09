@@ -10,12 +10,15 @@ namespace NeuralNet.Training
             MinibatchSize = 100;
             MaxNumberOfMinibatches = int.MaxValue;
             SampleFrequency = 1000;
+            LearningRate = 0.01;
+            MomentumTimeConstant = 1100;
         }
 
-        public string TrainingFile { get; set; }
         public int Epochs { get; set; }
         public int MinibatchSize { get; set; }
         public int MaxNumberOfMinibatches { get; set; }
         public int SampleFrequency { get; set; }
+        public double LearningRate { get; internal set; }
+        public double MomentumTimeConstant { get; internal set; }
     }
 }

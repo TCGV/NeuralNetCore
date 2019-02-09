@@ -4,12 +4,14 @@ namespace NeuralNet.Utilities
 {
     public class Codec<T>
     {
-        public Codec(IEnumerable<T> values)
+        public Codec(IEnumerable<T> symbols)
         {
             int i = 0;
+
             valueToIndex = new Dictionary<T, int>();
             indexToValue = new Dictionary<int, T>();
-            foreach (var v in values)
+
+            foreach (var v in symbols)
             {
                 valueToIndex.Add(v, i);
                 indexToValue.Add(i, v);

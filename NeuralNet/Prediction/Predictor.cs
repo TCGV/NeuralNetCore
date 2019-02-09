@@ -7,66 +7,63 @@ using System.Linq;
 
 namespace NeuralNet.Prediction
 {
-    public class CharPredictor
+    public class Predictor<T>
     {
-        public CharPredictor(string modelPath, IEnumerable<char> symbols, bool seed = true)
+        public Predictor(string modelPath, IEnumerable<T> symbols, bool seed = true)
             : this(symbols, seed)
         {
             SetDevice();
             this.model = Function.Load(modelPath, device);
         }
 
-        public CharPredictor(Function model, IEnumerable<char> symbols, bool seed = true)
+        public Predictor(Function model, IEnumerable<T> symbols, bool seed = true)
             : this(symbols, seed)
         {
             SetDevice();
             this.model = model;
         }
 
-        CharPredictor(IEnumerable<char> symbols, bool seed = true)
+        Predictor(IEnumerable<T> symbols, bool seed = true)
         {
-            this.codec = new Codec<char>(symbols);
+            this.codec = new Codec<T>(symbols);
             this.random = seed ? new Random() : new Random(0);
         }
 
-        public string Evaluate(string inputText, int outputLength)
+        public IEnumerable<T> Evaluate(IEnumerable<T> inputData, int outputLength)
         {
-            this.numberOfEvaluatedCharacters = 0;
+            this.numberOfEvaluatedSymbols = 0;
 
-            List<int> textOutput = new List<int>();
+            List<int> outputData = new List<int>();
             IList<IList<float>> output = null;
             List<float> sequence = new List<float>();
 
-            for (int i = 0; i < inputText.Length; i++)
+            foreach (var x in inputData)
             {
-                var c = inputText[i];
-                var cAsIndex = codec.Encode(c);
-                textOutput.Add(cAsIndex);
+                var xIndex = codec.Encode(x);
+                outputData.Add(xIndex);
             
                 var input = new float[codec.Count];
-                input[cAsIndex] = 1;
+                input[xIndex] = 1;
                 sequence.AddRange(input);
 
                 output = Evaluate(sequence);
-                numberOfEvaluatedCharacters++;
+                numberOfEvaluatedSymbols++;
             }
 
-            for (int i = 0; i < outputLength - inputText.Length; i++)
+            for (int i = 0; i < outputLength - inputData.Count(); i++)
             {
-                var suggestedCharIndex = GetRandomSuggestion(output[0].ToList());
-                textOutput.Add(suggestedCharIndex);
+                var suggestedSymbolIndex = GetRandomSuggestion(output[0].ToList());
+                outputData.Add(suggestedSymbolIndex);
 
                 var input = new float[codec.Count];
-                input[suggestedCharIndex] = 1;
+                input[suggestedSymbolIndex] = 1;
                 sequence.AddRange(input);
                 
                 output = Evaluate(sequence);
-                numberOfEvaluatedCharacters++;
+                numberOfEvaluatedSymbols++;
             }
 
-            List<char> sentenceAsChar = textOutput.Select(x => codec.Decode(x)).ToList();
-            string sentence = string.Join("", sentenceAsChar.ToArray());
-            return sentence;
+            return outputData.Select(x => codec.Decode(x)).ToArray();
         }
 
         private IList<IList<float>> Evaluate(List<float> sequence)
@@ -89,7 +86,7 @@ namespace NeuralNet.Prediction
         
         private int GetRandomSuggestion(List<float> probabilities)
         {
-            probabilities = probabilities.GetRange(codec.Count * (numberOfEvaluatedCharacters - 1), codec.Count);
+            probabilities = probabilities.GetRange(codec.Count * (numberOfEvaluatedSymbols - 1), codec.Count);
             probabilities = probabilities.Select(f => (float)Math.Exp(f)).ToList();
             var sumOfProbabilities = probabilities.Sum();
             probabilities = probabilities.Select(x => x / sumOfProbabilities).ToList();
@@ -104,13 +101,13 @@ namespace NeuralNet.Prediction
             return selection;
         }
 
-        private int numberOfEvaluatedCharacters;
+        private int numberOfEvaluatedSymbols;
 
         private Random random;
         
         private Function model;
 
-        private Codec<char> codec;
+        private Codec<T> codec;
 
         private DeviceDescriptor device;
     }
